@@ -2,43 +2,77 @@ package ui;
 
 
 import model.HttpClient;
+import model.Store;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class App {
 
-    private Scanner input;
+    public Scanner input;
     HttpClient httpClient;
-//    public store Walmart;
-//    public store Superstore;
-//    public store SDM;
+    public Store store;
+    public Store Walmart;
+    public Store Superstore;
+    public Store SDM;
+    public Store SOF;
+    public Store LD;
+    public Store HD;
+    public Store CT;
+    public List<Store> doesContainTP;
+    public List<Store> doesContainM;
+    public List<Store> doesContainHS;
+    public List<Store> allStores;
+    public List<Store> availableStores;
+
 
     public App() {
         httpClient = new HttpClient();
-        addAddress();
+        runApp();
     }
 
-//    public void runApp() {
-//        Walmart = new store("Walmart", 14.99, 19.99,19.99);
-//        Superstore = new store("Superstore" , 8.99, 10.49, 14.99);
-//        SDM = new store("Shoppers Drug Mart", 0.00, 0.00, 6.99);
-//        boolean keepRunning = true;
-//
-//        while (keepRunning) {
-//            options();
-//            int option = input.nextInt();
-//
-//            if (option == 1) {
-//
-//            }
-//
-//        }
-//    }
 
-    public void addAddress() {
-        input = new Scanner(System.in);
-        System.out.println("Enter an address");
-        String address = input.nextLine();
+    public void runApp() {
+        boolean keeprunning = true;
+        while (keeprunning) {
+            options();
+            Scanner input = new Scanner(System.in);
+            int option = input.nextInt();
+            createStores();
+
+            if (option == 1) {
+                for (Store store: allStores) {
+                    if (store.getcontainsMasks()) {
+                        System.out.println(store.getName());
+                        String storeName = store.getName();
+                        addAddress(storeName);
+                    }
+                }
+            } else if (option == 2) {
+                for (Store store: allStores) {
+                    if (store.getcontainsToiletPaper()) {
+                        System.out.println(store.getName());
+                        String storeName = store.getName();
+                        addAddress(storeName);
+                    }
+                }
+            } else if (option == 3) {
+                for (Store store: allStores) {
+                    if (store.getHandSanitizer()) {
+                        System.out.println(store.getName());
+                        String storeName = store.getName();
+                        addAddress(storeName);
+                    }
+                }
+            } else if (option == 4) {
+                keeprunning = false;
+            }
+        }
+    }
+
+
+    public void addAddress(String address) {
         try {
             httpClient.placeSearch(address);
         } catch (Exception e) {
@@ -46,12 +80,54 @@ public class App {
         }
     }
 
-//    public void options() {
-//        System.out.println("Which item would you like to find?");
-//        System.out.println("1. Face Masks");
-//        System.out.println("2. Toilet Paper");
-//        System.out.println("3. Hand Sanitizer");
-//        System.out.println("4. Quit");
+    public void options() {
+        System.out.println("Which item would you like to find?");
+        System.out.println("1. Face Masks");
+        System.out.println("2. Toilet Paper");
+        System.out.println("3. Hand Sanitizer");
+        System.out.println("4. Quit");
+    }
+
+    public void createStores() {
+        allStores = new ArrayList<Store>();
+        Walmart = new Store("Walmart", true, true,true);
+        Superstore = new Store("Superstore" , true, false, true);
+        SDM = new Store("Shoppers Drug Mart", false,false, true);
+        SOF = new Store("Save On Foods" , true, false, true);
+        LD = new Store("London Drugs" , true, false, true);
+        HD = new Store("Home Depot" , true, true, true);
+        CT = new Store("Canadian Tire", true, true, true );
+        allStores.add(Walmart);
+        allStores.add(Superstore);
+        allStores.add(SDM);
+        allStores.add(SOF);
+        allStores.add(LD);
+        allStores.add(HD);
+        allStores.add(CT);
+    }
+
+//    public void containsToiletPaper() {
+//        for (Store store: allStores) {
+//            if (store.getcontainsToiletPaper()) {
+//                doesContainTP.add(store);
+//            }
+//        }
+//    }
+//
+//    public void containsMasks() {
+//        for (Store store: allStores) {
+//            if (store.getcontainsMasks()) {
+//                doesContainM.add(store);
+//            }
+//        }
+//    }
+//
+//    public void getHandSanitizer() {
+//        for (Store store: allStores) {
+//            if (store.getHandSanitizer()) {
+//                doesContainHS.add(store);
+//            }
+//        }
 //    }
 
 }

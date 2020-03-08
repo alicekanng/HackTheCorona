@@ -8,9 +8,11 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class HttpClient {
-
+    private String location;
     public final CloseableHttpClient httpClient = HttpClients.createDefault();
 
     public void placeSearch (String placeName) throws Exception {
@@ -24,14 +26,50 @@ public class HttpClient {
             //System.out.println(response.getStatusLine().toString());
             HttpEntity entity = response.getEntity();
             Header headers = entity.getContentType();
-            System.out.println(headers);
             if (entity != null) {
                 // return it as a String
                 String result = EntityUtils.toString(entity);
-                System.out.println(result);
+                parseAddress(result);
+                parseLat(result);
+                parseLong(result);
+
             }
 
         }
 
     }
-}
+
+    public String parseLat(String string) {
+        JSONObject obj = new JSONObject(string);
+        JSONArray arr = obj.getJSONArray("candidates");
+        obj = arr.getJSONObject(0);
+        obj = obj.getJSONObject("geometry");
+        obj = obj.getJSONObject("viewport");
+        obj = obj.getJSONObject("southwest");
+        String latitude = obj.get("lat").toString();
+        return latitude;
+
+    }
+
+    public String parseLong(String string) {
+        JSONObject obj = new JSONObject(string);
+        JSONArray arr = obj.getJSONArray("candidates");
+        obj = arr.getJSONObject(0);
+        obj = obj.getJSONObject("geometry");
+        obj = obj.getJSONObject("viewport");
+        obj = obj.getJSONObject("southwest");
+        String longitude = obj.get("lng").toString();
+        return longitude;
+
+    }
+
+    public void parseAddress(String string) {
+        JSONObject obj = new JSONObject(string);
+        JSONArray arr = obj.getJSONArray("candidates");
+        obj = arr.getJSONObject(0);
+        String address = obj.get("formatted_address").toString();
+        System.out.println(address);
+
+    }
+
+  }
